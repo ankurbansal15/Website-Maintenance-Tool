@@ -28,7 +28,7 @@ export default function ContentCheck() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-8 mt-16 ml-64 mr-64">
       <h1 className="text-3xl font-bold mb-8">Content Check</h1>
       
       <Card className="mb-8">

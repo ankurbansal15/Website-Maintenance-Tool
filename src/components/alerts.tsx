@@ -21,7 +21,7 @@ export default function DowntimeAlerts() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-8 mt-16 ml-64 mr-64">
       <h1 className="text-3xl font-bold mb-8">Downtime Alerts</h1>
       
       <Card className="mb-8">

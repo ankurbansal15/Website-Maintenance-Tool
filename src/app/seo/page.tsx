@@ -6,12 +6,12 @@ import SEOAnalysis from "@/components/seo";
 
 export default function Conponent() {
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen bg-background">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col">
         {/* Header */}
         <Header />
 

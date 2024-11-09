@@ -11,7 +11,7 @@ export default function Conponent() {
       <Sidebar />
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col">
         {/* Header */}
         <Header />
 

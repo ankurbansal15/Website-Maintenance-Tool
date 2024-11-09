@@ -102,7 +102,7 @@ export default function PerformanceMetrics() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-4">
+    <div className="container mx-auto p-4 space-y-4 mt-16 ml-64 mr-64">
       <h1 className="text-3xl font-bold">Performance Metrics</h1>
       <div className="flex flex-col sm:flex-row gap-4">
         <Select value={selectedWebsite} onValueChange={setSelectedWebsite}>
