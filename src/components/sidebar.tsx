@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 
 const sidebarItems = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Performance", href: "/performance", icon: BarChart3 },
   { name: "Security", href: "/security", icon: Lock },
   { name: "SEO", href: "/seo", icon: GanttChartSquare },
