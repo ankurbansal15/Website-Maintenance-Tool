@@ -2,7 +2,7 @@
 
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
-import Alerts from "@/components/alerts";
+import KeywordResearchComponent from "@/components/keyword-research";
 
 export default function Conponent() {
   return (
@@ -16,7 +16,7 @@ export default function Conponent() {
         <Header />
 
         {/* Main Activity */}
-        <Alerts/>
+        <KeywordResearchComponent/>
       </div>
     </div>
   );

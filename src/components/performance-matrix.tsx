@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
 import { Activity, AlertTriangle, ArrowDown, ArrowUp, Clock, Download, Zap } from 'lucide-react'
+import { useUser } from "@clerk/nextjs";
+import axios from "axios";
 
 // Simulated API call to fetch performance data
 const fetchPerformanceData = async (url: string, days: number) => {
@@ -18,7 +20,7 @@ const fetchPerformanceData = async (url: string, days: number) => {
   for (let i = 0; i < days; i++) {
     data.push({
       date: new Date(now - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      loadTime: Math.random() * 3000 + 500,
+      loadTime: Math.random() * 300 + 100,
       ttfb: Math.random() * 500 + 100,
       fcp: Math.random() * 1500 + 300,
       lcp: Math.random() * 2500 + 500,
@@ -51,25 +53,62 @@ interface PerformanceDataPoint {
   fid: number
 }
 
+type ListItem = {
+  url: string;
+  isValid: boolean;
+};
+
 export default function PerformanceMetrics() {
   const [selectedWebsite, setSelectedWebsite] = useState(websites[0].value)
   const [selectedTimeRange, setSelectedTimeRange] = useState(timeRanges[0].value)
   const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [websitesList, setWebsites] = useState<ListItem[]>([]);
+  const { isSignedIn, user } = useUser();
+
+  // Add useEffect to fetch performance data when website or time range changes
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true)
+      try {
+        const data = await fetchPerformanceData(selectedWebsite, parseInt(selectedTimeRange))
+        setPerformanceData(data)
+      } catch (error) {
+        console.error('Error fetching performance data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    loadData()
+  }, [selectedWebsite, selectedTimeRange])
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      const data = await fetchPerformanceData(selectedWebsite, parseInt(selectedTimeRange))
-      setPerformanceData(data)
-      setIsLoading(false)
-    }
-    fetchData()
-  }, [selectedWebsite, selectedTimeRange])
+    const fetchWebsites = async () => {
+      if (!isSignedIn || !user) return;
+      try {
+        const response = await axios.get("/api/websites", {
+          params: { username: user.username },
+        });
+        if (response.data.status) {
+          const websitesData = response.data.data.map((website: any) => ({
+            url: website.url,
+            isValid: website.isActive,
+          }));
+          setWebsites(websitesData);
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        alert("Error fetching websites: " + (error as any).message);
+      }
+    };
+
+    fetchWebsites();
+  }, [isSignedIn, user]);
 
   const getAverageMetric = (metric: keyof PerformanceDataPoint) => {
     if (performanceData.length === 0) return '0'
-    const sum = performanceData.reduce((acc, curr) => acc + (curr[metric] as number), 0)
+    const sum = performanceData.reduce((acc, curr) => acc + Number(curr[metric]), 0)
     return (sum / performanceData.length).toFixed(2)
   }
 
@@ -110,9 +149,9 @@ export default function PerformanceMetrics() {
             <SelectValue placeholder="Select website" />
           </SelectTrigger>
           <SelectContent>
-            {websites.map((website) => (
-              <SelectItem key={website.value} value={website.value}>
-                {website.label}
+            {websitesList.map((website, index) => (
+              <SelectItem key={`${website.url}-${index}`} value={website.url}>
+                {website.url}
               </SelectItem>
             ))}
           </SelectContent>
