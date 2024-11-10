@@ -1,33 +1,33 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+// import mongoose, { Document, Model, Schema } from "mongoose";
 
-interface IWebsite extends Document {
-  url: string;
-  userId: mongoose.Types.ObjectId;
-  isActive: boolean;
-}
+// interface IWebsite extends Document {
+//   url: string;
+//   userId: mongoose.Types.ObjectId;
+//   isActive: boolean;
+// }
 
-const WebsiteSchema: Schema<IWebsite> = new Schema(
-  {
-    url: {
-      type: String,
-      required: true,
-    },
-    userId: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: "User",
-    },
-    isActive: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
-  }
-);
+// const WebsiteSchema: Schema<IWebsite> = new Schema(
+//   {
+//     username: {
+//       type: String,
+//       required: true,
+//     },
+//     url: {
+//       type: String,
+//       required: true,
+//     },
 
-const Website: Model<IWebsite> =
-  mongoose.models.Website || mongoose.model<IWebsite>("Website", WebsiteSchema);
+//     isActive: {
+//       type: Boolean,
+//       default: false,
+//     },
+//   },
+//   {
+//     timestamps: true, // Automatically adds createdAt and updatedAt fields
+//   }
+// );
 
-export default Website;
+// const Website: Model<IWebsite> =
+//   mongoose.models.Website || mongoose.model<IWebsite>("Website", WebsiteSchema);
+
+// export default Website;
