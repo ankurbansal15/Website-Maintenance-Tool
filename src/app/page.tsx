@@ -1,9 +1,7 @@
 'use client'
 
 import LandingPage from '@/components/landing-page'
-
 export default function Dashboard() {
-
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">

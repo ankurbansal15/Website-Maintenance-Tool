@@ -1,35 +1,76 @@
-import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { useState } from 'react'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import axios from 'axios';
+import UrlStatusList from './url-status-list';
+import { useUser } from "@clerk/nextjs";
+
+type ListItem = {
+  url: string;
+  isValid: boolean;
+};
+
 const dummyData = [
   { name: 'Page A', responseTime: 400 },
   { name: 'Page B', responseTime: 300 },
   { name: 'Page C', responseTime: 500 },
   { name: 'Page D', responseTime: 280 },
   { name: 'Page E', responseTime: 390 },
-]
+];
 
 export default function Dashboard() {
-  const [newWebsite, setNewWebsite] = useState('')
+  const [newWebsite, setNewWebsite] = useState('');
+  const { isSignedIn, user } = useUser();
+  const [websites, setWebsites] = useState<ListItem[]>([]);
 
-  const handleAddWebsite = async () => {
+  useEffect(() => {
+    const fetchWebsites = async () => {
+      try {
+        const response = await axios.get('/api/websites', { params: { username: user?.username } });
+        if (response.data.status) {
+          console.log(response.data.data);
+          const websitesData = response.data.data.map((website: any) => ({
+            url: website.url,
+            isValid: website.isActive,
+          }));
+          setWebsites(websitesData);
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        alert('Error fetching websites: ' + (error as any).message);
+      }
+    };
+    
+    if (isSignedIn) {
+      fetchWebsites();
+    }
+  }, [isSignedIn, user]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewWebsite(e.target.value);
+  };
+
+  const handleAddWebsite = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      const response = await axios.post('/api/websites', { url: newWebsite })
+      const response = await axios.post('/api/websites', { url: newWebsite, username: user?.username });
       if (response.data.status) {
-        alert('Website added successfully')
-        setNewWebsite('')
+        setWebsites([...websites, { url: newWebsite, isValid: true }]);
+        alert('Website added successfully');
+        setNewWebsite('');
       } else {
-        alert(response.data.message)
+        alert(response.data.message);
       }
     } catch (error) {
-      alert('Error adding website: ' + (error as any).message)
+      alert('Error adding website: ' + (error as any).message);
     }
-  }
+  };
+
   return (
     <div className="p-8 mt-16 ml-64 mr-64">
       <h1 className="text-3xl font-bold mb-8">Website Monitoring Dashboard</h1>
@@ -44,15 +85,19 @@ export default function Dashboard() {
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="newWebsite">Website URL</Label>
               <Input
-                type="text"
+                type="text" 
+                value={newWebsite} 
+                onChange={handleInputChange} 
                 id="newWebsite"
                 placeholder="https://example.com"
               />
             </div>
-            <Button>Add</Button>
+            <Button onClick={handleAddWebsite}>Add</Button>
           </div>
         </CardContent>
       </Card>
+      
+      <UrlStatusList items={websites} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
@@ -82,5 +127,5 @@ export default function Dashboard() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

@@ -4,6 +4,7 @@ import "./globals.css";
 import {
   ClerkProvider,
 } from '@clerk/nextjs'
+import connectToDatabase from "@/lib/mongodb";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -25,6 +26,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  connectToDatabase();
+
   return (
     <ClerkProvider>
  <html lang="en">
