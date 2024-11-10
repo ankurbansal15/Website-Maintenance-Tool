@@ -6,17 +6,23 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { SignUp,SignIn } from '@clerk/nextjs'
 
 export default function AuthForm() {
   const [isLogin, setIsLogin] = useState(true)
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
+  const [status, setStatus] = useState('')
+  
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setStatus('')
 
     if (!email || !password) {
       setError('Please fill in all fields')
@@ -29,6 +35,7 @@ export default function AuthForm() {
     }
 
     // Here you would typically call your authentication API
+    
     console.log(isLogin ? 'Logging in...' : 'Signing up...', { email, password })
   }
 
@@ -47,7 +54,8 @@ export default function AuthForm() {
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <SignIn />
+            {/* <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input 
@@ -70,11 +78,25 @@ export default function AuthForm() {
                 />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
+              {status && <p className="text-sm text-green-500">{status}</p>}
+
               <Button type="submit" className="w-full">Login</Button>
-            </form>
+            </form> */}
           </TabsContent>
           <TabsContent value="signup">
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <SignUp />
+            {/* <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+                <Label htmlFor="signup-name">Name</Label>
+                <Input 
+                  id="signup-name" 
+                  type="text" 
+                  placeholder="name" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required 
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="signup-email">Email</Label>
                 <Input 
@@ -107,8 +129,10 @@ export default function AuthForm() {
                 />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
+              {status && <p className="text-sm text-green-500">{status}</p>}
+
               <Button type="submit" className="w-full">Sign Up</Button>
-            </form>
+            </form> */}
           </TabsContent>
         </Tabs>
       </CardContent>

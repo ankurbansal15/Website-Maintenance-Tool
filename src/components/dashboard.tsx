@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-
+import { useState } from 'react'
+import axios from 'axios'
 const dummyData = [
   { name: 'Page A', responseTime: 400 },
   { name: 'Page B', responseTime: 300 },
@@ -14,6 +15,21 @@ const dummyData = [
 ]
 
 export default function Dashboard() {
+  const [newWebsite, setNewWebsite] = useState('')
+
+  const handleAddWebsite = async () => {
+    try {
+      const response = await axios.post('/api/websites', { url: newWebsite })
+      if (response.data.status) {
+        alert('Website added successfully')
+        setNewWebsite('')
+      } else {
+        alert(response.data.message)
+      }
+    } catch (error) {
+      alert('Error adding website: ' + (error as any).message)
+    }
+  }
   return (
     <div className="p-8 mt-16 ml-64 mr-64">
       <h1 className="text-3xl font-bold mb-8">Website Monitoring Dashboard</h1>
